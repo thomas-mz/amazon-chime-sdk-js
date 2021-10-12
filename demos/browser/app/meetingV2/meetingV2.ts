@@ -46,6 +46,7 @@ import {
   RemovableAnalyserNode,
   SimulcastLayers,
   SimulcastUplinkPolicyNScaleLowStream,
+  SimulcastUplinkPolicyFixedStream,
   TargetDisplaySize,
   TimeoutScheduler,
   Transcript,
@@ -1058,12 +1059,12 @@ export class DemoMeetingApp
           mixed.addTrack(localTile.state().boundVideoStream.getVideoTracks()[0]);
         }
 
-        // We need to get access to the media stream broker, which requires knowing
-        // the exact implementation. Sorry!
-        /* @ts-ignore */
-        const av: DefaultAudioVideoController = this.audioVideo.audioVideoController;
-        const input = await av.mediaStreamBroker.acquireAudioInputStream();
-        mixed.addTrack(input.getAudioTracks()[0]);
+        // // We need to get access to the media stream broker, which requires knowing
+        // // the exact implementation. Sorry!
+        // /* @ts-ignore */
+        // const av: DefaultAudioVideoController = this.audioVideo.audioVideoController;
+        // const input = await av.mediaStreamBroker.acquireAudioInputStream();
+        // mixed.addTrack(input.getAudioTracks()[0]);
 
         recorder = new MediaRecorder(mixed, { mimeType: 'video/webm; codecs=vp9' });
         console.info('Setting recorder to', recorder);
@@ -1710,7 +1711,7 @@ export class DemoMeetingApp
     if (this.enableSimulcast) {
       const policy = (document.getElementById('simulcast-policy') as HTMLSelectElement).value;
       if (policy === 'nscale-lower') {
-        configuration.videoUplinkBandwidthPolicy = new SimulcastUplinkPolicyNScaleLowStream(configuration.credentials.attendeeId, this.meetingLogger);
+        configuration.videoUplinkBandwidthPolicy = new SimulcastUplinkPolicyFixedStream(configuration.credentials.attendeeId, this.meetingLogger);
       }
     }
 
