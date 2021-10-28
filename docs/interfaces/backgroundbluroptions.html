@@ -91,6 +91,7 @@
 								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="backgroundbluroptions.html#blurstrength" class="tsd-kind-icon">blur<wbr>Strength</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="backgroundbluroptions.html#logger" class="tsd-kind-icon">logger</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="backgroundbluroptions.html#reportingperiodmillis" class="tsd-kind-icon">reporting<wbr>Period<wbr>Millis</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="backgroundbluroptions.html#videoframesperfilterupdate" class="tsd-kind-icon">video<wbr>Frames<wbr>Per<wbr>Filter<wbr>Update</a></li>
 							</ul>
 						</section>
 					</div>
@@ -104,7 +105,7 @@
 					<div class="tsd-signature tsd-kind-icon">blur<wbr>Strength<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/aws/amazon-chime-sdk-js/blob/master/src/backgroundblurprocessor/BackgroundBlurOptions.ts#L14">src/backgroundblurprocessor/BackgroundBlurOptions.ts:14</a></li>
+							<li>Defined in <a href="https://github.com/aws/amazon-chime-sdk-js/blob/master/src/backgroundblurprocessor/BackgroundBlurOptions.ts#L17">src/backgroundblurprocessor/BackgroundBlurOptions.ts:17</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -134,13 +135,33 @@
 					<div class="tsd-signature tsd-kind-icon">reporting<wbr>Period<wbr>Millis<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/aws/amazon-chime-sdk-js/blob/master/src/backgroundblurprocessor/BackgroundBlurOptions.ts#L17">src/backgroundblurprocessor/BackgroundBlurOptions.ts:17</a></li>
+							<li>Defined in <a href="https://github.com/aws/amazon-chime-sdk-js/blob/master/src/backgroundblurprocessor/BackgroundBlurOptions.ts#L14">src/backgroundblurprocessor/BackgroundBlurOptions.ts:14</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
 						<div class="lead">
 							<p>How often the video frame processor will report observed events.</p>
 						</div>
+					</div>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
+					<a name="videoframesperfilterupdate" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagOptional">Optional</span> video<wbr>Frames<wbr>Per<wbr>Filter<wbr>Update</h3>
+					<div class="tsd-signature tsd-kind-icon">video<wbr>Frames<wbr>Per<wbr>Filter<wbr>Update<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/aws/amazon-chime-sdk-js/blob/master/src/backgroundblurprocessor/BackgroundBlurOptions.ts#L28">src/backgroundblurprocessor/BackgroundBlurOptions.ts:28</a></li>
+						</ul>
+					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>The number of video frames to be process before updating the background filtering. For example, the default
+								rate of 1, meaning 1 video frame per background filter update, will update the background effect on every frame.
+								If you set a ratio to 3, meaning 3 video frames per background filter update, it will update the background
+							filtering effect every third frame.</p>
+						</div>
+						<p>This can be used to reduce the CPU workload on a video stream using background filter. The higher the skip rate
+						the less CPU will be used.</p>
 					</div>
 				</section>
 			</section>
@@ -168,6 +189,9 @@
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-interface">
 								<a href="backgroundbluroptions.html#reportingperiodmillis" class="tsd-kind-icon">reporting<wbr>Period<wbr>Millis</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-interface">
+								<a href="backgroundbluroptions.html#videoframesperfilterupdate" class="tsd-kind-icon">video<wbr>Frames<wbr>Per<wbr>Filter<wbr>Update</a>
 							</li>
 						</ul>
 					</li>

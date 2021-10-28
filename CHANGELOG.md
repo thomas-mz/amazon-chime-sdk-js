@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Add support for layers allocation negotiation in Chromium based browsers to avoid resubscribing to preemptively turn off simulcast streams or to switch layers.
 - Update browser compatibility doc for background blur
 - Add a doc to guide builders on managing video quality for different video layouts. See [guide](https://aws.github.io/amazon-chime-sdk-js/modules/videolayout.html).
+- Update background blur options to allow for skipping frames to improve CPU utilization.
 
 ### Removed
 

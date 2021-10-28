@@ -53,7 +53,7 @@ describe('BackgroundBlurProcessor', () => {
       predictPayload: null,
       callInvalidMessage: false,
     }
-  ): void => {
+  ): Worker => {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     let eventListener: (evt: MessageEvent<any>) => any = () => {
       console.error('eventListener is not set');
@@ -104,24 +104,26 @@ describe('BackgroundBlurProcessor', () => {
           break;
       }
     }
+    const workerObj = {
+      postMessage: handlePostMessage,
+      onmessage: () => {},
+      onmessageerror: () => {},
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      addEventListener: (type: string, listener: (evt: MessageEvent<any>) => any) => {
+        eventListener = listener;
+      },
+      removeEventListener: () => {},
+      terminate: () => {},
+      dispatchEvent: () => true,
+      onerror: () => {},
+    };
 
     const workerPromise = new Promise<Worker>(resolve => {
-      resolve({
-        postMessage: handlePostMessage,
-        onmessage: () => {},
-        onmessageerror: () => {},
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        addEventListener: (type: string, listener: (evt: MessageEvent<any>) => any) => {
-          eventListener = listener;
-        },
-        removeEventListener: () => {},
-        terminate: () => {},
-        dispatchEvent: () => true,
-        onerror: () => {},
-      });
+      resolve(workerObj);
     });
 
     sandbox.stub(loader, 'loadWorker').returns(workerPromise);
+    return workerObj;
   };
 
   const stubSupported = (supported: boolean, providedSupported: boolean = true): void => {
@@ -208,6 +210,7 @@ describe('BackgroundBlurProcessor', () => {
           logger: new ConsoleLogger('test', LogLevel.INFO),
           reportingPeriodMillis: 1000,
           blurStrength: 10,
+          videoFramesPerFilterUpdate: 1,
         };
 
         expect(() => new BackgroundBlurProcessorProvided(null, validOptions)).to.throw(
@@ -237,6 +240,13 @@ describe('BackgroundBlurProcessor', () => {
           () =>
             new BackgroundBlurProcessorProvided(validSpec, { ...validOptions, blurStrength: null })
         ).to.throw('processor has null options - blurStrength');
+        expect(
+          () =>
+            new BackgroundBlurProcessorProvided(validSpec, {
+              ...validOptions,
+              videoFramesPerFilterUpdate: null,
+            })
+        ).to.throw('processor has null options - videoFramesPerFilterUpdate');
       });
 
       it('can be destroyed when items are null', async () => {
@@ -546,6 +556,60 @@ describe('BackgroundBlurProcessor', () => {
         // confirm no failure when passing in null mask
         bbprocessor.drawImageWithMask(document.createElement('canvas'), null);
         bbprocessor.drawImageWithMask(document.createElement('canvas'), new ImageData(10, 10));
+      });
+
+      it('filter rate 1', async () => {
+        const worker = sandbox.spy(
+          stubInit({ initPayload: 2, loadModelPayload: 2 }),
+          'postMessage'
+        );
+        stubSupported(true);
+
+        const buffers: VideoFrameBuffer[] = [
+          new CanvasVideoFrameBuffer(document.createElement('canvas')),
+        ];
+
+        const videoFramesPerFilterUpdate = 1;
+        const bbprocessor = (await BackgroundBlurVideoFrameProcessor.create(null, {
+          videoFramesPerFilterUpdate,
+        })) as BackgroundBlurProcessorProvided;
+
+        worker.resetHistory();
+        for (let i = 0; i < videoFramesPerFilterUpdate; i++) {
+          await bbprocessor.process(buffers);
+        }
+        expect(worker.callCount).to.be.equal(videoFramesPerFilterUpdate);
+      });
+
+      it('filter rate 5', async () => {
+        const worker = sandbox.spy(
+          stubInit({ initPayload: 2, loadModelPayload: 2 }),
+          'postMessage'
+        );
+        stubSupported(true);
+
+        const buffers: VideoFrameBuffer[] = [
+          new CanvasVideoFrameBuffer(document.createElement('canvas')),
+        ];
+
+        const videoFramesPerFilterUpdate = 5;
+        const bbprocessor = (await BackgroundBlurVideoFrameProcessor.create(null, {
+          videoFramesPerFilterUpdate,
+        })) as BackgroundBlurProcessorProvided;
+
+        worker.resetHistory();
+
+        await bbprocessor.process(buffers);
+        expect(worker.callCount).to.be.equal(1);
+
+        worker.resetHistory();
+        for (let i = 0; i < videoFramesPerFilterUpdate - 1; i++) {
+          await bbprocessor.process(buffers);
+          expect(worker.notCalled).to.be.true;
+        }
+
+        await bbprocessor.process(buffers);
+        expect(worker.callCount).to.be.equal(1);
       });
 
       it('predict handles failures', async () => {

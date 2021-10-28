@@ -193,6 +193,10 @@ export default class BackgroundBlurVideoFrameProcessor {
     if (!options.reportingPeriodMillis) {
       options.reportingPeriodMillis = 1000;
     }
+
+    if (!options.videoFramesPerFilterUpdate) {
+      options.videoFramesPerFilterUpdate = 1;
+    }
     return options;
   }
 
