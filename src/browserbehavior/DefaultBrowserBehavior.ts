@@ -274,6 +274,10 @@ export default class DefaultBrowserBehavior implements BrowserBehavior, Extended
     return 'setSinkId' in HTMLAudioElement.prototype;
   }
 
+  requiresDisablingH264Encoding(): boolean {
+    return this.isIOSSafari() && this.version() === '15.1.0' ;
+  }
+
   // These helpers should be kept private to encourage
   // feature detection instead of browser detection.
   private isIOSSafari(): boolean {
